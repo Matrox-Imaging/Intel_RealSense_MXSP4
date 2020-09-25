@@ -23,6 +23,9 @@
 // Enable the specific 3d display settings to adjust the view for this example.
 #define DISPLAY_ADJUST_SPECIFIC  1
 
+//Set 1 to extract confidence if available 
+#define EXTRACT_CONFIDENCE 0
+
 //****************************************************************************
 // Example description.
 //****************************************************************************
@@ -97,6 +100,8 @@ int main(void)
    
    MosPrintf(MIL_TEXT("- Update the example code:\n"));
    MosPrintf(MIL_TEXT("  - Set the REALSENSESDK_INSTALLED define to 1.\n"));
+   MosPrintf(MIL_TEXT("  - If Confidence stream is available on the connecting camera, optionally \n"));
+   MosPrintf(MIL_TEXT("    set the EXTRACT_CONFIDENCE define to 1 to extract confidence.\n"));
    MosPrintf(MIL_TEXT("  - Recompile the example.\n\n"));
    
    MosPrintf(MIL_TEXT("The example has been tested with the following setup:\n"));
@@ -126,8 +131,18 @@ int InterfaceRealSense(void)
       // Create a Pipeline - this serves as a top-level API for streaming and processing frames
       rs2::pipeline p;
    
-      p.start();
+      // Create a config object
+      rs2::config cfg;
 
+      // Enable the streams
+      cfg.enable_stream(RS2_STREAM_DEPTH);
+      cfg.enable_stream(RS2_STREAM_COLOR);
+
+      if (EXTRACT_CONFIDENCE)
+         cfg.enable_stream(RS2_STREAM_CONFIDENCE);
+         
+      auto profile = p.start(cfg);
+      
       // Retrieve dummy Intel RealSense components to allocate the application's objects.
       auto frames = p.wait_for_frames();
       auto color = frames.get_color_frame();
@@ -168,6 +183,17 @@ int InterfaceRealSense(void)
                3, PointCloudsWidth, PointCloudsHeight, 8 + M_UNSIGNED, M_IMAGE + M_PROC + M_RGB32 + M_PACKED,
                &pReflectance, &ReflectancePitch);
             }
+         }
+
+      // Get the "confidence" component into the confidence.
+      unsigned char* pConfidence = nullptr;
+      MIL_INT ConfidencePitch;
+      MIL_ID ConfidenceComponent = M_NULL;
+      if (EXTRACT_CONFIDENCE)
+         {
+         ConfidenceComponent = GetMILContainerComponent(MilSystem, PointCloudContainer, M_COMPONENT_CONFIDENCE,
+            1, PointCloudsWidth, PointCloudsHeight, 8 + M_UNSIGNED, M_IMAGE + M_PROC,
+            &pConfidence, &ConfidencePitch);
          }
 
       // Allocate a container for display
@@ -219,6 +245,13 @@ int InterfaceRealSense(void)
          stride = color.as<rs2::video_frame>().get_stride_in_bytes();
          ColorData = (unsigned char *)color.get_data();
 
+         unsigned char *ConfidenceData = nullptr;
+         if (EXTRACT_CONFIDENCE)
+            {
+            rs2::frame confidence = frames.first(RS2_STREAM_CONFIDENCE);
+            ConfidenceData = (unsigned char *)confidence.get_data();
+            }
+
          MIL_INT p = 0;
          MIL_UINT mappedX = 0, mappedY = 0;
          for (MIL_INT y = 0; y < PointCloudsHeight; y++)
@@ -243,6 +276,12 @@ int InterfaceRealSense(void)
                         pReflectance[p].z = ColorData[(mappedY * stride + 3 * mappedX) + 2];
                         }
                      }
+
+                  if (EXTRACT_CONFIDENCE)
+                     {
+                     pConfidence[x + y * ConfidencePitch] = ConfidenceData[p];
+                     }
+
                   // otherwise extract only pointclouds without color.
                   else
                      {
