@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>mil.lib;milim.lib;mil3d.lib;mdispd3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mil.lib;milim.lib;mil3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(mil_path32)\..\lib\;$(RealsenseSDK)\lib\x86\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
@@ -136,7 +136,7 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>mil.lib;milim.lib;mil3d.lib;mdispd3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mil.lib;milim.lib;mil3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(mil_path64)\..\lib\;$(RealsenseSDK)\lib\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
@@ -167,7 +167,7 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>mil.lib;milim.lib;mil3d.lib;mdispd3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mil.lib;milim.lib;mil3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(mil_path32)\..\lib\;$(RealsenseSDK)\lib\x86\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -198,7 +198,7 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>mil.lib;milim.lib;mil3d.lib;mdispd3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mil.lib;milim.lib;mil3d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(mil_path64)\..\lib\;$(RealsenseSDK)\lib\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>
