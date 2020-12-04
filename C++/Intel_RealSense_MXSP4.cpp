@@ -168,6 +168,8 @@ int InterfaceRealSense(void)
          3, PointCloudsWidth, PointCloudsHeight, 32 + M_FLOAT, M_IMAGE + M_PROC + M_PACKED + M_RGB96,
          &pPointCloud, &PointCloudPitch);
 
+      MbufControlContainer(PointCloudContainer, M_COMPONENT_RANGE, M_3D_INVALID_DATA_FLAG, M_TRUE);
+
       // Get the "reflectance" component if RGB color is available.
       SColor* pReflectance = nullptr;
       MIL_INT ReflectancePitch;
@@ -258,37 +260,32 @@ int InterfaceRealSense(void)
             {
             for (MIL_INT x = 0; x < PointCloudsWidth; x++)
                {
-               if (vertices[p].z)
+               // If RGB color is available, apply 2D texture mapping onto the point clouds that have corresponding colors in 2D frame.
+               if (color)
                   {
-                  // If RGB color is available, apply 2D texture mapping onto the point clouds that have corresponding colors in 2D frame.
-                  if (color)
-                     {
-                     if (tex_coords[p].u >= 0 && tex_coords[p].u <= 1 && tex_coords[p].v >= 0 && tex_coords[p].v <= 1)
-                        {
-                        pPointCloud[p].x = vertices[p].x;
-                        pPointCloud[p].y = vertices[p].y;
-                        pPointCloud[p].z = vertices[p].z;
-
-                        mappedX = (MIL_UINT)(tex_coords[p].u * TextureWidth) % TextureWidth;
-                        mappedY = (MIL_UINT)(tex_coords[p].v * TextureHeight) % TextureHeight;
-                        pReflectance[p].x = ColorData[(mappedY * stride + 3 * mappedX)];
-                        pReflectance[p].y = ColorData[(mappedY * stride + 3 * mappedX) + 1];
-                        pReflectance[p].z = ColorData[(mappedY * stride + 3 * mappedX) + 2];
-                        }
-                     }
-
-                  if (EXTRACT_CONFIDENCE)
-                     {
-                     pConfidence[x + y * ConfidencePitch] = ConfidenceData[p];
-                     }
-
-                  // otherwise extract only pointclouds without color.
-                  else
+                  if (tex_coords[p].u >= 0 && tex_coords[p].u <= 1 && tex_coords[p].v >= 0 && tex_coords[p].v <= 1)
                      {
                      pPointCloud[p].x = vertices[p].x;
                      pPointCloud[p].y = vertices[p].y;
                      pPointCloud[p].z = vertices[p].z;
+
+                     mappedX = (MIL_UINT)(tex_coords[p].u * TextureWidth) % TextureWidth;
+                     mappedY = (MIL_UINT)(tex_coords[p].v * TextureHeight) % TextureHeight;
+                     pReflectance[p].x = ColorData[(mappedY * stride + 3 * mappedX)];
+                     pReflectance[p].y = ColorData[(mappedY * stride + 3 * mappedX) + 1];
+                     pReflectance[p].z = ColorData[(mappedY * stride + 3 * mappedX) + 2];
                      }
+                  }
+               else
+                  {
+                  pPointCloud[p].x = vertices[p].x;
+                  pPointCloud[p].y = vertices[p].y;
+                  pPointCloud[p].z = vertices[p].z;
+                  }
+
+               if (EXTRACT_CONFIDENCE)
+                  {
+                  pConfidence[x + y * ConfidencePitch] = ConfidenceData[p];
                   }
                p++;
                }
