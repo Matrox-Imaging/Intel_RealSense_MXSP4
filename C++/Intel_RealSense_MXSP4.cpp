@@ -13,7 +13,30 @@
 #include <mil.h>
 #include <iostream>             // for cout
 
-#include "MainTemplate.h"
+//*****************************************************************************
+// Structure representing a 3d point cloud, with position and intensity data.
+//*****************************************************************************
+struct SPoint3d
+{
+	MIL_FLOAT x;
+	MIL_FLOAT y;
+	MIL_FLOAT z;
+};
+
+struct SColor
+{
+	void ConvertRGBBGR(const SColor& OtherColor)
+	{
+		x = OtherColor.z;
+		y = OtherColor.y;
+		z = OtherColor.x;
+	}
+
+	MIL_UINT8 x;
+	MIL_UINT8 y;
+	MIL_UINT8 z;
+	MIL_UINT8 a;
+};
 
 // Once the RealSense SDK is installed and the project is configured (seePrintHeader()), 
 // set REALSENSESDK_INSTALLED to 1 to enable the RealSense-specific code.
